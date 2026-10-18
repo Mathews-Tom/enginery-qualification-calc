@@ -1,0 +1,19 @@
+schema_version = 1
+
+[execution]
+harness = "claude-code"
+
+[runner]
+mode = "isolated-oci"
+model_access = "relay"
+
+[validation]
+commands = ["python3 -m unittest"]
+repair_limit = 0
+
+[[acceptance.checks]]
+name = "division_by_zero_is_an_error"
+observer = "command"
+argv = ["python3", "-m", "calc", "1/(2-2)"]
+assertions = [{ kind = "exit_status", equals = 2 }, { kind = "stderr", contains = "division by zero" }]
+fault_classes = ["constant_result", "wrong_build"]
