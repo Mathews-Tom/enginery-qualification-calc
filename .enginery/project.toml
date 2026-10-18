@@ -1,0 +1,26 @@
+schema_version = 1
+
+[execution]
+harness = "omp"
+
+[runner]
+mode = "isolated-oci"
+model_access = "relay"
+
+[validation]
+commands = ["python3 -m unittest"]
+repair_limit = 0
+
+[[acceptance.checks]]
+name = "exponent_is_right_associative"
+observer = "command"
+argv = ["python3", "-m", "calc", "2^3^2"]
+assertions = [{ kind = "exit_status", equals = 0 }, { kind = "stdout", contains = "512" }]
+fault_classes = ["constant_result", "wrong_build"]
+
+[[acceptance.checks]]
+name = "exponent_binds_tighter_than_unary_minus"
+observer = "command"
+argv = ["python3", "-m", "calc", "-2^2"]
+assertions = [{ kind = "exit_status", equals = 0 }, { kind = "stdout", contains = "-4" }]
+fault_classes = ["constant_result", "wrong_build"]
