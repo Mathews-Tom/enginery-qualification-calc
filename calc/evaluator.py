@@ -79,7 +79,12 @@ class _Parser:
         while self._peek().kind in ("*", "/"):
             operator = self._take().kind
             right = self._unary()
-            value = value * right if operator == "*" else value / right
+            if operator == "*":
+                value = value * right
+            elif right == 0:
+                raise CalcError("division by zero")
+            else:
+                value = value / right
         return value
 
     def _unary(self) -> float:

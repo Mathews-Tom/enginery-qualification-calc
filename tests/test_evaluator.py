@@ -28,6 +28,18 @@ class EvaluateTests(unittest.TestCase):
                 evaluate(source)
 
 
+class DivisionTests(unittest.TestCase):
+    def test_division_by_zero_raises_calc_error(self) -> None:
+        for source in ("1/0", "1/(2-2)", "0/0", "1/0.0", "1/-0"):
+            with self.subTest(source=source):
+                with self.assertRaises(CalcError) as context:
+                    evaluate(source)
+                self.assertEqual(str(context.exception), "division by zero")
+
+    def test_valid_division(self) -> None:
+        self.assertEqual(evaluate("1/4"), 0.25)
+
+
 class FormatTests(unittest.TestCase):
     def test_integral_values_have_no_fraction(self) -> None:
         self.assertEqual(format_number(14.0), "14")
