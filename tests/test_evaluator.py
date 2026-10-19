@@ -22,6 +22,20 @@ class EvaluateTests(unittest.TestCase):
         self.assertAlmostEqual(evaluate("1.5 * 2"), 3.0)
         self.assertAlmostEqual(evaluate(".5 + .25"), 0.75)
 
+    def test_power(self) -> None:
+        self.assertEqual(evaluate("2^3"), 8)
+        self.assertEqual(evaluate("2^3^2"), 512)
+        self.assertEqual(evaluate("-2^2"), -4)
+        self.assertEqual(evaluate("2*3^2"), 18)
+        self.assertEqual(evaluate("(-2)^2"), 4)
+        self.assertEqual(evaluate("2^-1"), 0.5)
+        self.assertEqual(format_number(evaluate("4^0.5")), "2")
+
+    def test_invalid_power(self) -> None:
+        for source in ("2^", "^2", "0^-1", "(-8)^0.5"):
+            with self.subTest(source=source), self.assertRaises(CalcError):
+                evaluate(source)
+
     def test_invalid_expressions(self) -> None:
         for source in ("", "1 +", "(1 + 2", "1 2", "2 $ 3", ")"):
             with self.subTest(source=source), self.assertRaises(CalcError):

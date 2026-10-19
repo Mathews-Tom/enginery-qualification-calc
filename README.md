@@ -11,7 +11,7 @@ python3 -m calc "2 + 3 * 4"      # prints 14
 python3 -m calc "(1 + 2) / 4"    # prints 0.75
 ```
 
-Supported: integers and decimals, `+ - * /`, parentheses and unary minus, with the usual precedence. An invalid expression prints `error: <reason>` on stderr and exits with status 2.
+Supported: integers and decimals, `+ - * /`, `^` (exponent, right-associative, binds tighter than unary minus: `-2^2` is `-4`, `2^-1` is `0.5`), parentheses and unary minus, with the usual precedence. An invalid expression prints `error: <reason>` on stderr and exits with status 2.
 
 ## Tests
 

@@ -4,7 +4,8 @@ Grammar (lowest to highest precedence)::
 
     expression := term (("+" | "-") term)*
     term       := unary (("*" | "/") unary)*
-    unary      := "-" unary | primary
+    unary      := "-" unary | power
+    power      := primary ("^" unary)?
     primary    := NUMBER | "(" expression ")"
 """
 
@@ -38,7 +39,7 @@ def tokenize(source: str) -> list[Token]:
         if number is not None:
             tokens.append(Token("number", number, match.start(1)))
         elif symbol is not None:
-            if symbol not in "+-*/()":
+            if symbol not in "+-*/^()":
                 raise CalcError(f"unexpected character {symbol!r} at position {match.start(2)}")
             tokens.append(Token(symbol, symbol, match.start(2)))
         position = match.end()
@@ -86,7 +87,21 @@ class _Parser:
         if self._peek().kind == "-":
             self._take()
             return -self._unary()
-        return self._primary()
+        return self._power()
+
+    def _power(self) -> float:
+        base = self._primary()
+        if self._peek().kind != "^":
+            return base
+        position = self._take().position
+        exponent = self._unary()
+        try:
+            result = base**exponent
+        except (ZeroDivisionError, OverflowError) as error:
+            raise CalcError(f"invalid power at position {position}") from error
+        if isinstance(result, complex):
+            raise CalcError(f"invalid power at position {position}")
+        return result
 
     def _primary(self) -> float:
         token = self._take()
